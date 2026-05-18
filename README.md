@@ -1,0 +1,429 @@
+# Trade Compliance & Geopolitical Risk Intelligence Platform — Showcase
+
+**Engineered by [Kamil Slodki](https://www.linkedin.com/in/kamilslodki/)** · Valencia, España · Remote-first
+
+**Plataforma SaaS multi-tenant de compliance para comercio internacional con 3 niveles de control integrados (sanctions screening contra listas oficiales públicas OFAC SDN · UN Consolidated · EU CFSP · UK OFSI · HMT · BIS vía ingest delta-tracking diario con upsert atómico; dual-use export controls contra EU Annex I del Reglamento 2021/821 + ECCN codes US BIS + HS/TARIC tariff codes con mapping textual fuzzy descripción técnica → código regulatorio + rule engine de destination controls por país; routes & geopolitical risk intelligence sobre corredores marítimos y aéreos principales globales con NLP keyword-based + negation detection + source credibility weighting sobre noticias en tiempo real + integración a fuentes OSINT públicas ACLED / GDELT / IMB piracy reports / USGS earthquakes / national travel advisories + cálculo de impacto geográfico vía Haversine distance + buffer expansion dinámico + intersección con geometría de rutas + scoring dinámico de eventos por tipo y severidad + time-series forecasting con Prophet y uncertainty bands para análisis de riesgo de cierre de corredores) con punto central de orquestación (Integrated Risk Decision Engine) que agrega los 3 niveles vía risk aggregator multi-señal y emite decisión auditable (AUTO-CLEAR · REVIEW · FLAG · BLOCK) con reason codes explicables, aplicación cross-cutting de marine cargo insurance con premium calculator multi-factor (valor carga · tipo cargo · risk score ruta · war risk premium · múltiples perfiles de carga con risk multipliers diferenciados), aplicaciones horizontales en desarrollo (case management workflow · OSINT enrichment · PEP / UBO monitoring · adverse media), motor de matching fuzzy ensemble propio con 3 algoritmos combinados (RapidFuzz token_set_ratio + Soundex + Metaphone para nombres no latinos transliterados) y oracle scoring multi-feature (similitud nombre · alias strength · multi-list bonus · program risk · entity type · pattern recognition) con reason codes auditables enumerables, motor de optimización de rutas multi-criteria con Pareto frontier analysis sobre múltiples dimensiones (cost · time · safety/geopolitical risk · carbon footprint · ESG · balanced) y constraints duros (sanciones bloquean automáticamente · bloqueos legales por jurisdicción · max_transit_days · max_cost · max_risk_score · max_carbon_kg · avoid_countries), audit log append-only inmutable a nivel de servicio con integrity validation, invariantes core declaradas y testeadas (matching determinista auditado · oracle scoring con reason codes · ingest con delta tracking y upsert atómico · audit log append-only · tenant_id derivado de API key con isolation estricta), multi-tenancy estricto con tenant_id FK en todas las tablas core + API key hash argon2 + rotación API keys + 2FA TOTP, ADRs versionadas con plantilla fija, documentación arc42 completa + auditorías internas previas con doctrina verify-findings, compliance posture documentada con DORA inventory + SOC2 / ISO27001 roadmap + Incident Response Plan + Single Source of Truth canónico, RBAC granular (Admin · Compliance Officer · Analyst · Viewer · Auditor) con matrix de permisos, integraciones outbound (webhooks via adapter pattern · APIs externas opcionales · email service · webhook signing), observabilidad con OpenTelemetry + Sentry, daily ingest scheduler con cron + Celery + Redis queue + healthchecks, frontend i18n multi-locale, deployment dual cloud con docker-compose para local dev. Stack Python + FastAPI + SQLAlchemy 2 + Alembic + PostgreSQL + Redis + Celery + RapidFuzz + Prophet + Next.js + React + Radix UI + Tailwind + NextAuth + OpenTelemetry + Sentry. Diseñado como producto propio del autor — actualmente en estado de proyecto técnico (no en producción comercial activa).**
+
+[![Type](https://img.shields.io/badge/type-showcase%20%C2%B7%20producto%20propio-blue.svg)](#sobre-este-showcase)
+[![Track](https://img.shields.io/badge/track-dual%20%C2%B7%20A%20%2B%20B-blue.svg)](#tracks-target)
+[![Status](https://img.shields.io/badge/status-proyecto%20t%C3%A9cnico%20avanzado-success.svg)](#estado-y-madurez-técnica)
+[![Role](https://img.shields.io/badge/role-AI%20Systems%20Engineer%20%E2%80%A2%20B2B%20Delivery%20Engineer-blueviolet.svg)](#contacto)
+[![Engineering Doctrine](https://img.shields.io/badge/engineering%20doctrine-5%20protocols-9cf.svg)](#sistema-operativo-de-ingeniería-del-autor)
+[![Domain](https://img.shields.io/badge/domain-international%20trade%20compliance%20%C2%B7%20geopolitical%20risk-9cf.svg)](#funcionalidad-3-niveles--cross-cutting)
+[![Stack](https://img.shields.io/badge/stack-FastAPI%20%7C%20Postgres%20%7C%20Redis%20%7C%20Celery%20%7C%20Next.js%20%7C%20Prophet%20%7C%20OpenTelemetry-informational.svg)](#stack-técnico)
+
+<sub>Última actualización: 2026-05-18</sub>
+
+> **Nota sobre alcance del showcase (disciplina de OPSEC explícita)**: este repositorio NO menciona corredores marítimos específicos, NO publica parámetros operativos del matching engine, NO expone nombres de archivos del proyecto privado, NO revela región de deploy, NO publica versiones exactas del stack y NO incluye samples ECCN concretos. La sanitización es **prueba positiva de disciplina de compliance**, no limitación. Datos de listas de sanciones reales, identificadores de entidades, samples dual-use con clasificación específica, endpoints exactos, secretos de integración, identificadores de modelos ML por corredor concreto, configuración de infraestructura y artefactos comerciales **NO se publican** por consideraciones regulatorias (GDPR · LOPDGDD · MAR EU · export control US/EU) y prudencia operativa.
+
+---
+
+## Sobre este showcase
+
+Plataforma técnicamente compleja de **compliance para comercio internacional** que integra en una sola arquitectura coherente tres dominios regulatorios habitualmente fragmentados (sanctions screening · dual-use export controls · routes & geopolitical risk) más una capa cross-cutting de marine cargo insurance que materializa el valor económico del scoring agregado.
+
+**Es proyecto propio del autor en estado de producto técnico avanzado** — actualmente no en producción comercial activa. Lo que muestra el showcase no es marketing, son **patrones de ingeniería verificables** sobre uno de los dominios más regulados del software empresarial: trade compliance.
+
+El interés del showcase es **técnico-arquitectónico**: la disciplina aplicada a un dominio con cero margen de error regulatorio (multas directas · bloqueo de comercio legítimo si falso positivo · permitir transacción sancionada si falso negativo).
+
+---
+
+## Tracks target
+
+| Track A — AI Systems · Production LLM/ML | Track B — B2B Delivery Engineering |
+|---|---|
+| Matching fuzzy ensemble multi-algoritmo con oracle scoring multi-feature + reason codes auditables · NLP rule-based + negation + source credibility · time-series forecasting con Prophet + uncertainty bands · optimización multi-criteria Pareto · sin LLM como decisor final (explicabilidad como invariante regulatoria) | Multi-tenant SaaS con tenant isolation estricta · audit log append-only inmutable · RBAC granular · ADRs versionadas · DORA inventory + SOC2/ISO27001 roadmap · documentación arc42 completa · auditorías internas con doctrina verify-findings · integraciones via adapter pattern · daily ingest scheduler con delta-tracking · compliance posture con Incident Response Plan |
+
+Track dual: el proyecto cumple ambos. AI sin LLM como decisor (decisión determinista trazable) + delivery institucional con compliance verificable.
+
+---
+
+## El problema
+
+El compliance del comercio internacional vive fragmentado en silos:
+
+- **Sanctions screening** se hace contra listas oficiales públicas (OFAC · UN · EU · UK) con motores de fuzzy matching que producen miles de falsos positivos.
+- **Export controls de dual-use** se gestionan manualmente con tablas de ECCN + Annex I del Reglamento EU 2021/821 + HS/TARIC, con clasificación textual propensa a error humano.
+- **Geopolitical risk de rutas** se monitoriza con dashboards desconectados (cierres de corredores marítimos principales · piratería en estrechos críticos · sanciones que bloquean tránsito · conflictos que cambian el risk premium · catástrofes naturales que afectan corredores).
+- **Marine cargo insurance** se cotiza con war risk premiums basados en heurísticas opacas.
+
+Cada silo decide por su cuenta. **Cuando los 4 dominios convergen en una sola transacción** (¿este buyer está sancionado? ¿este producto es dual-use? ¿esta ruta atraviesa una zona con sanciones secundarias? ¿qué premium de seguro aplica?), la fragmentación dispara errores caros: bloqueo de comercio legítimo o autorización accidental de transacción sancionada (multa regulatoria directa).
+
+Antipatrones sistémicos al construir una plataforma que unifique los 4 dominios:
+
+| Antipatrón sistémico de la industria | Patrón aplicado en este sistema |
+|---|---|
+| Matching fuzzy con un solo algoritmo (típicamente Levenshtein) → no funciona con nombres no latinos transliterados | **Ensemble matcher de 3 algoritmos** (RapidFuzz token_set_ratio + Soundex + Metaphone) con oracle scoring multi-feature explícito y reason codes auditables enumerables |
+| LLM como decisor final de compliance → alucinaciones · zero explicabilidad · regulator no acepta "el modelo dijo que sí" como respuesta | **NO LLM como decisor**. Toda decisión de matching / dual-use / route risk es determinista con reason codes auditables. LLM (cuando se usa) es solo enrichment / categorización de noticias OSINT, nunca decisor de compliance |
+| Listas de sanciones cargadas full-snapshot diario → ingest pesada · sin trazabilidad de cambios · imposible auditar por qué una entidad apareció/desapareció | **Delta-tracking + upsert atómico** en ingest. Cada cambio (added · modified · removed) trazado con timestamp + source |
+| Audit log mutable o ausente → regulator rechaza · imposible reconstruir decisión histórica | **Audit log append-only** con servicio dedicado que garantiza NO UPDATE NI DELETE como invariante validada. Audit trail por screening |
+| Multi-tenancy soft (tenant_id en body de la request) → trivial bypass · primera vulnerabilidad explotada en pentest | **Tenant_id derivado de API key hashed (argon2)**, nunca del body. Invariante de tenant isolation testeada |
+| Optimización de rutas con un único criterio (cost) → solución "óptima" inviable por riesgo · sin trazabilidad de por qué se eligió esa ruta | **Pareto frontier multi-criteria** sobre múltiples dimensiones (cost · time · safety · carbon · ESG · balanced) con constraints duros (sanciones bloquean · bloqueos legales · avoid_countries) y reasoning por ruta explícito |
+| NLP de noticias con LLM puro → coste alto + alucinación geográfica + sin negation handling | **NLP keyword-based con negation detection + source credibility weighting + sentiment**. Tiers de keywords (critical · high · medium) · negation reduce severidad · pesos por credibilidad de fuente configurables · sin dependencia de modelos transformers caros |
+| Tracking de catástrofes/conflictos con coordenadas exactas mapeadas a "afecta o no" → falso negativo si evento está cerca pero fuera del polígono | **Haversine distance + buffer expansion dinámico según severidad + intersección con geometría de rutas** (LineString GeoJSON). Permite eventos cercanos a corredor sin estar encima |
+| Time-series forecasting sin uncertainty bands → predicción puntual sin contexto de confianza · usuario interpreta como certeza | **Prophet con uncertainty intervals + external regressors** (conflict intensity · military activity). Output siempre con banda de confianza, nunca punto único |
+| Forecasts ML como decisores de bloqueo → riesgo legal MAR (Market Abuse Regulation EU) si el output influye precios commodity/seguros | **Forecasts ML como input al risk aggregator, nunca decisor final**. El humano (compliance officer) aprueba/rechaza con audit trail completo |
+| Documentación dispersa en wikis / Slack → drift entre código y doc · regulator pide arc42 / runbooks formales y no existen | **arc42 completa + ADRs versionadas + auditorías internas + DORA inventory + SOC2/ISO27001 roadmap + Incident Response Plan + Single Source of Truth canónico**. Documentación es activo de primera clase |
+| Una clase / servicio mezcla policy + scoring + side effects → imposible testear · imposible auditar | **Service layer con responsabilidad única por servicio** y separación estricta entre matching · screening · audit · auth · tenant management · classification |
+
+---
+
+## Funcionalidad — 3 niveles + cross-cutting
+
+### Nivel 1 — Sanctions Screening
+
+Screening de entidades (personas físicas + jurídicas) contra **listas oficiales públicas** de sanciones internacionales.
+
+- **Fuentes integradas**: OFAC SDN · UN Consolidated · EU CFSP · UK HMT/OFSI · BIS (más fuentes en pipeline).
+- **Ingest diario**: scheduler cron + Celery + Redis queue + healthchecks · delta-tracking · upsert atómico.
+- **Volumen**: decenas de miles de entidades canónicas consolidadas multi-fuente con miles de aliases y direcciones.
+- **Matching engine**: ensemble multi-algoritmo (ver [stack IA](#stack-ia-detallado)).
+- **Decisiones canónicas**: `AUTO-CLEAR` · `REVIEW` · `FLAG` · `BLOCK` — deterministas, auditadas, con reason codes.
+- **API**: endpoints de screening individual + batch + integrated (orquestado con N2 y N3).
+
+### Nivel 2 — Commodities / Dual-Use Export Controls
+
+Clasificación y control de productos contra normativa de export control.
+
+- **EU Annex I del Reglamento 2021/821** + **ECCN codes (BIS US)** + **HS/TARIC tariff codes**.
+- **Catálogo amplio** de items dual-use indexados con descripción técnica.
+- **Matching textual fuzzy** descripción → código regulatorio (descripción natural del producto → ECCN/HS code).
+- **Rule engine de destination controls**: matriz país × código regulatorio.
+- **Cross-check con N1**: ¿end-user del producto controlado está sancionado?
+
+### Nivel 3 — Routes & Geopolitical Risk Intelligence
+
+Análisis de riesgo geopolítico de **corredores marítimos y aéreos principales globales**.
+
+- **Cobertura**: set de corredores principales globales (no enumerados por prudencia regulatoria — riesgo MAR EU si predicciones por corredor nombrado se interpretan como market-moving).
+- **Modelos ML conflict-futures** entrenados con Prophet (uno por corredor) con external regressors y uncertainty bands.
+- **NLP sobre noticias en tiempo real** (keyword-based, no LLM): múltiples categorías de evento clasificadas (conflict · sanctions · infrastructure · regulatory · port operations · maritime threats · …).
+- **Fuentes OSINT públicas integradas** como categorías (ACLED conflict data · GDELT event database con Cameo codes · IMB piracy reports · USGS earthquakes · national travel advisories · feeds RSS oficiales).
+- **Cálculo de impacto geográfico**: Haversine distance + buffer expansion dinámico según severidad + intersección con geometría de rutas (LineString GeoJSON) almacenada en BD.
+- **Risk scoring dinámico**: base risk del corredor + escalation factor por eventos activos + temporal decay + amplificadores semánticos elevan severidad.
+- **Outputs canónicos**: risk_level del corredor (LOW · MEDIUM · HIGH · CRITICAL) + alternative routes con tradeoff (cost / days / risk) + timeline histórico de eventos.
+
+### Cross-cutting — Marine Cargo Insurance
+
+Aplicación cross-cutting que materializa el risk score agregado en valor económico verificable.
+
+- **Premium calculator multi-factor**: valor carga × tipo de cargo × risk score de ruta × war risk premium.
+- **Perfiles de carga** con risk multipliers diferenciados (categorías industriales, productos perecederos, materiales raw, sectores especializados).
+- **ROI analysis**: cambiar ruta = ahorrar $X premium con +Y días tránsito.
+- **Cross-integración**: el premium incorpora score de N1 (sanciones en países tránsito) + N2 (¿commodity dual-use en tránsito?) + N3 (risk score corredor).
+
+### Horizontales (en desarrollo)
+
+Capa horizontal de funcionalidades complementarias: case management workflow con FSM explícita · OSINT enrichment sobre entidades flagged · PEP / UBO monitoring · adverse media continuo.
+
+---
+
+## Punto central — Integrated Risk Decision Engine
+
+Los 3 niveles + insurance NO son monolíticos. Son **motores independientes que convergen en un orquestador**:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  API client / Frontend                                   │
+│  (transaction context: buyer · seller · product ·       │
+│   origin · destination · route · value · cargo type)    │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+              ┌─────────▼─────────┐
+              │  Integrated Check  │
+              │  (orchestrator)    │
+              └─────────┬─────────┘
+                        │
+       ┌────────────────┼────────────────┐
+       │                │                │
+       ▼                ▼                ▼
+┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+│  N1         │  │  N2         │  │  N3         │
+│  Sanctions  │  │  Dual-Use   │  │  Routes &   │
+│  Screening  │  │  Controls   │  │  Geopolitical│
+│             │  │             │  │  Risk        │
+└──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+       │                │                │
+       │      ┌─────────┴─────────┐      │
+       │      │ Cargo Insurance   │      │
+       │      │ (cross-cutting)   │      │
+       │      └─────────┬─────────┘      │
+       │                │                │
+       └────────────────┼────────────────┘
+                        │
+              ┌─────────▼─────────┐
+              │  Risk Aggregator  │
+              │  (multi-signal)   │
+              └─────────┬─────────┘
+                        │
+              ┌─────────▼─────────────────────┐
+              │  Decision + reason codes      │
+              │  AUTO-CLEAR · REVIEW · FLAG · │
+              │  BLOCK with explainability    │
+              │  + audit log entry            │
+              └───────────────────────────────┘
+```
+
+**Cada nivel funciona standalone** (un cliente puede llamar solo N1 sin pasar por N2/N3). **Cada nivel alimenta al siguiente** en cascada cuando hay orquestación. **Cada decisión final es auditada** con timestamp + tenant_id + reason codes + nivel que disparó.
+
+---
+
+## Stack IA detallado
+
+Toda la inteligencia del sistema es **determinista y trazable**. NO hay LLM como decisor final (decisión consciente: regulator no acepta black-box).
+
+### 1. Matching engine — fuzzy ensemble
+
+| Componente | Algoritmo | Propósito |
+|---|---|---|
+| **Fuzzy** | RapidFuzz `token_set_ratio` | Variaciones ortográficas, transposiciones, orden de tokens |
+| **Phonetic** | Soundex + Metaphone + Double Metaphone | Nombres no latinos transliterados |
+| **Ensemble** | Ponderación multi-algoritmo configurable | Combina los 3 con pesos calibrados (no publicados por prudencia operativa) |
+| **Oracle** | Scoring multi-feature | similitud nombre · alias strength · multi-list bonus · program risk · entity type · pattern recognition |
+
+**Reason codes auditables enumerables**. Cada decisión carga su reason code en audit log para reconstrucción regulatoria.
+
+**Normalización**: lowercase + strip whitespace + diacríticos eliminados + transliteración multi-script.
+
+**Deduplicación multi-source**: si entidad aparece en múltiples listas oficiales, bonus de confidence configurable.
+
+### 2. NLP de eventos geopolíticos — keyword-based con negation
+
+Servicio de clasificación de noticias en múltiples categorías de evento:
+
+- **3 tiers de keywords**: CRITICAL · HIGH · MEDIUM.
+- **Negation detection**: palabras como `unlikely`, `denied`, `speculation`, `rumor` reducen severidad calculada.
+- **Source credibility weighting**: pesos configurables por tipo de fuente (oficial vs. news vs. social).
+- **Severity score**: rango normalizado 0.0–1.0 + confidence 0.0–1.0.
+- **Sin transformers / BERT / GPT** — keyword + heurística + scoring lógico.
+
+### 3. Geographic impact — Haversine + buffer expansion
+
+- **Haversine distance** entre evento georreferenciado y geometría de la ruta.
+- **Buffer dinámico según severidad del evento**.
+- **Intersección** con `LineString` GeoJSON almacenada en BD (geometry library estándar).
+- **Temporal decay**: eventos antiguos pesan menos exponencialmente.
+- **Sin clustering ML** — agregación por zona con servicio dedicado.
+
+### 4. Time-series forecasting — Prophet
+
+- **Prophet** (Facebook) con external regressors (conflict intensity · military activity).
+- **Modelos pickle entrenados por corredor** (identificadores específicos withheld por prudencia regulatoria MAR EU).
+- **Uncertainty intervals**: output siempre con banda de confianza, nunca punto único.
+- **Forecast horizon configurable** (días–semanas).
+- **NUNCA decisor final**: input al risk aggregator, humano aprueba decisión.
+
+### 5. Route optimization — Pareto multi-criteria
+
+- **Algoritmo**: generación de candidatos + scoring multi-factor + Pareto frontier filtering.
+- **Múltiples criterios**: cost · time · safety/geopolitical risk · carbon footprint · ESG · balanced.
+- **Constraints duros**: sanciones bloquean automáticamente · bloqueos legales por jurisdicción · `max_transit_days` · `max_cost_usd` · `max_risk_score` · `max_carbon_kg` · `avoid_countries` list.
+- **Carbon intensity por modo**: sea · rail · air · road (valores públicos estándar kg CO2 / TEU-km).
+- **EU ETS carbon pricing** integrado (configurable).
+- **Reasoning per route**: cada ruta candidata explica por qué está bloqueada, recomendada o descartada.
+
+### 6. Scoring agregado — risk explainability
+
+Servicio de agregación multi-nivel con weighting configurable por tenant:
+
+- **Desglose de factores** que contribuyeron al score final.
+- **Confidence intervals** via Prophet cuando hay datos históricos.
+- **Compliance score** consolidado para shipment assessment + trade finance scoring.
+
+---
+
+## Arquitectura técnica
+
+### Capas
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  Frontend                                                 │
+│  Next.js + React + Radix UI + Tailwind + Mapbox          │
+│  (dashboard · sanctions module · commodities module ·    │
+│   routes interactive map · cases workflow · admin)       │
+└──────────────────────────────────────────────────────────┘
+                            │
+                            │ NextAuth JWT + API key
+                            ▼
+┌──────────────────────────────────────────────────────────┐
+│  API Layer                                                │
+│  FastAPI (routers organizados por dominio)               │
+│  - check / commodity_check / routes / insurance /         │
+│    integrated_check / cases / admin / webhooks            │
+└──────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────────────────┐
+│  Service Layer                                            │
+│  Servicios separados por responsabilidad única:           │
+│  matching engine · ensemble matcher · fuzzy · phonetic ·  │
+│  screening · audit + integrity · auth · jwt · API key     │
+│  rotation · 2FA · event classifier · geopolitical OSINT · │
+│  route closure prediction · route optimizer · insurance · │
+│  premium calculator · PEP screening · policy versioning · │
+│  tenant risk weights                                      │
+└──────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────────────────┐
+│  Ingest Layer (cron + Celery + Redis)                    │
+│  Connectors por fuente oficial pública (OFAC · UN · EU ·  │
+│  UK · BIS · …) con delta-tracking + upsert atómico +      │
+│  healthchecks                                             │
+└──────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌──────────────────────────────────────────────────────────┐
+│  Data Layer                                               │
+│  PostgreSQL (prod) + SQLite (dev) + Alembic migrations   │
+│  Tablas multi-tenant FK · indexes en campos críticos     │
+│  Audit log append-only inmutable                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+### Multi-tenancy estricto
+
+- `tenant_id` FK en **todas** las tablas core.
+- API key hash con **argon2** (no SHA-256 plain).
+- **API key rotation** dedicada con servicio propio.
+- **2FA TOTP** integrado.
+- **Invariante**: tenant_id derivado de API key, nunca del body de la request. Testeada en suite dedicada de tenant isolation.
+
+### Audit log append-only
+
+- Modelo de historial de screening en BD.
+- Servicio core con `log_screening` inmutable.
+- Servicio de integridad que valida NO UPDATE NI DELETE.
+- Endpoint dedicado para consulta auditada.
+
+### Invariantes core declaradas
+
+| Garantía |
+|---|
+| **Matching determinista auditado** (AUTO-CLEAR / REVIEW / FLAG / BLOCK) con tests |
+| **Oracle scoring multi-feature** con reason codes |
+| **Ingest con delta tracking** + upsert atómico |
+| **Audit log append-only** (no UPDATE ni DELETE) |
+| **Tenant isolation estricta**: tenant_id derivado de API key |
+
+---
+
+## Stack técnico
+
+| Capa | Tecnología | Rol |
+|---|---|---|
+| **Backend** | Python + FastAPI + Pydantic 2 | API + validación de inputs/outputs |
+| **ORM + migrations** | SQLAlchemy 2 + Alembic | Tablas multi-tenant · migraciones versionadas |
+| **Database** | PostgreSQL (prod) + SQLite (dev) | Multi-tenant FK · audit log · GeoJSON |
+| **Cache + queue** | Redis + Celery | Daily ingest scheduler · async jobs |
+| **Fuzzy matching** | RapidFuzz + unidecode | Ensemble matcher |
+| **Phonetic** | Custom Soundex + Metaphone + Double Metaphone | Nombres no latinos |
+| **ML time-series** | Prophet (Facebook) | Conflict-futures forecasting con uncertainty bands |
+| **Geospatial** | shapely + GeoJSON | Geometría de rutas · Haversine · buffer expansion |
+| **Frontend** | Next.js + React + Radix UI + Tailwind | UI |
+| **i18n** | next-intl | Multi-locale (idiomas europeos principales) |
+| **Auth** | NextAuth + JWT dual + 2FA TOTP | App + programmatic API |
+| **Observability** | OpenTelemetry + Sentry | Traces · errors · custom metrics |
+| **Deploy** | Dual cloud (PaaS) + docker-compose dev | Multi-environment · CI/CD |
+| **Tests** | pytest + integration + E2E | Suite backend + frontend con cobertura de paths críticos |
+
+---
+
+## Engineering patterns visibles
+
+- **ADRs versionadas** con plantilla fija (contexto · decisión · alternativas · consecuencias · plan rollout · plan rollback). Cubren multi-tenancy · audit log · matching governance · ML governance · route blocking rules · pricing model · tenant onboarding.
+- **arc42 completa** con las 12 secciones canónicas (objetivos · restricciones · contexto · estrategia · bloques · runtime · despliegue · cross-cutting · decisiones · calidad · riesgos · glosario).
+- **Auditorías internas previas** con doctrina **verify-findings**: ratio de ruido < 15% objetivo, 5 campos por hallazgo (cita · ubicación · severidad · fix · pasada adversarial).
+- **CI/CD gates**: ruff (lint+format) · bandit (security) · detect-secrets con baseline · gitleaks · pytest · build.
+- **RBAC granular**: Admin · Compliance Officer · Analyst · Viewer · Auditor con matrix de permisos.
+- **Integrations via adapter pattern**: webhooks Slack / Teams / JIRA / SAP · APIs externas opcionales · webhook signing.
+- **Daily ingest scheduler**: cron + Celery + Redis queue + healthchecks · delta-tracking · upsert atómico.
+- **Policy versioning**: multi-versión de rules con rollback.
+- **Data quality validators** integrados en ingest.
+
+---
+
+## Compliance posture
+
+Documentación regulatoria publicada en el proyecto privado:
+
+- **DORA inventory** (Digital Operational Resilience Act — aplicable a financial services / RegTech europeo).
+- **SOC 2 / ISO 27001 roadmap** con compromisos de controles.
+- **Incident Response Plan** formal.
+- **Single Source of Truth** canónico (métricas e invariantes consolidadas, validables vía grep).
+- **Pentest scope** documentado con metodología OWASP y SLAs.
+
+Regulaciones a las que el sistema responde:
+
+- **OFAC SDN** (US Treasury · Office of Foreign Assets Control).
+- **UN Consolidated List** (UN Security Council).
+- **EU CFSP** (Common Foreign and Security Policy) + **EU Annex I del Reglamento 2021/821** (dual-use).
+- **UK HMT Sanctions** + **OFSI**.
+- **BIS** (US Bureau of Industry and Security).
+- **TARIC** (EU tariff).
+- **MAR EU** (Market Abuse Regulation) — informa la decisión de NO publicar outputs de forecasts ML por corredor concreto.
+- **GDPR + LOPDGDD** — informa multi-tenancy estricta y audit log inmutable.
+
+---
+
+## Estado y madurez técnica
+
+- **Proyecto técnico avanzado** del autor. **No en producción comercial activa**.
+- **arc42 + ADRs versionadas + auditorías internas** documentadas.
+- **Multi-tenant** estricto con tenant isolation testeada.
+- **Audit log append-only** inmutable con servicio dedicado de integridad.
+- **Invariantes core** declaradas y testeadas vía suite (backend + frontend tests cubriendo paths críticos).
+- **Ingest delta-tracking** automatizado contra fuentes oficiales públicas.
+- **Compliance posture** documentada (DORA · SOC2 · ISO27001 roadmap · IR plan · pentest scope).
+- **CI/CD con security gates** (ruff · bandit · detect-secrets · gitleaks).
+- **Internacionalización** multi-locale.
+
+---
+
+## Donde se aplica este patrón
+
+El patrón "**plataforma multi-tenant de compliance con motor de matching ensemble + scoring agregado multi-dominio + audit log append-only + risk aggregator con explicabilidad + integraciones outbound vía adapter pattern**" es **horizontal a cualquier dominio RegTech** donde decisiones automatizadas requieren trazabilidad regulatoria:
+
+- **KYC/AML** (Know Your Customer / Anti-Money Laundering).
+- **Sanctions screening** corporativo (cross-border transactions, vendor onboarding).
+- **Export controls** (dual-use, defense, technology transfer).
+- **Trade-based money laundering detection**.
+- **Geopolitical risk monitoring** para fondos, aseguradoras, supply chain.
+- **DORA-compliant ICT third-party risk management**.
+- **Fraud detection** con explicabilidad regulatoria.
+- **PEP / UBO monitoring continuo**.
+- **Healthcare compliance** con multi-tenant y audit trail (HIPAA · facturación regulada).
+- **Insurance underwriting** con scoring multi-factor explicable.
+
+Los patterns técnicos resueltos (ensemble fuzzy matching · delta-tracking ingest · multi-tenancy estricta con tenant derivado de API key · audit log append-only validado · NLP keyword-based con negation y source credibility · Pareto multi-criteria con constraints duros · Prophet con uncertainty bands · NO LLM como decisor · invariantes validables · doctrina verify-findings) son **horizontales a cualquier sistema regulado donde un error puede disparar consecuencias administrativas o legales directas**.
+
+---
+
+## Sistema operativo de ingeniería del autor
+
+Este proyecto se desarrolló bajo el sistema operativo de ingeniería propio del autor, replicado cross-proyecto en múltiples proyectos del ecosistema:
+
+- **Automation Engineering Protocol** — stage-gate horizontal de cambio: change-spec → guard layer → release train → rollback playbook.
+- **Prompt Engineering Protocol** — diseño modular con catálogo cerrado de patrones (aplicable a OSINT enrichment con LLM cuando se usa — nunca como decisor de compliance).
+- **Post-Development Verification Protocol** — 4 niveles (estática · integración · canarios E2E con datos sintéticos · observabilidad).
+- **Post-Development Gates** — gates pre-merge / pre-deploy / post-deploy con checklist bloqueante.
+- **Frozen Zones & Regression Prevention** — CONFIG vs HEALTH, auditoría holística periódica.
+
+Cada decisión estructural se documenta como ADR versionada. Cada cambio significativo pasa por `verify-findings` adversarial. Engineering-playbook propio con disciplina doctrinal cross-proyecto. La documentación es activo de primera clase.
+
+Protocolo de documentación detallado (arc42 + C4 + ADR + runbooks + postmortems) en [`docs/documentation-protocol.md`](docs/documentation-protocol.md).
+
+*Detalles operativos del proyecto privado (código fuente · endpoints exactos · samples de datos · secretos de integración · identificadores de corredores ML · dashboards en vivo · configuración de infraestructura) NO se publican por consideraciones regulatorias y de prudencia operativa.*
+
+---
+
+## Contacto
+
+**Kamil Slodki** — Valencia, España
+
+- Email: `solutions.satdata@gmail.com`
+- LinkedIn: [Kamil Slodki](https://www.linkedin.com/in/kamilslodki/)
+- Portfolio: [satdata-portfolio](https://github.com/KamilSlodki/satdata-portfolio)
+
+Disponible para **founding / staff AI roles** (remote · full-time + equity) y **B2B consulting / fractional CTO engagements** (retainer · day-rate · proyectos cerrados). Para consultas técnicas concretas, briefings de proyecto o detalles de compensación, escribir directamente al email comercial.

@@ -1,0 +1,151 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#2962FF', 'secondaryColor': '#00C853', 'tertiaryColor': '#FF6D00'}}}%%
+
+flowchart TB
+    subgraph frontend["Frontend (Next.js + React)"]
+        UI["UI dashboard + modules<br/>sanctions · commodities · routes ·<br/>cases · admin · audit viewer"]
+        I18N["i18n multi-locale<br/>idiomas europeos principales"]
+        AUTH_NEXT["NextAuth JWT + 2FA TOTP"]
+    end
+
+    subgraph api["API Layer (FastAPI)"]
+        ROUTER_CHECK["Sanctions Check router<br/>screening individual + batch"]
+        ROUTER_DUAL["Commodity Check router<br/>dual-use classification"]
+        ROUTER_ROUTES["Routes router<br/>route intelligence + economics"]
+        ROUTER_INSURANCE["Insurance router<br/>premium calc + ROI"]
+        ROUTER_INTEGRATED["Integrated Check router<br/>orchestrated N1+N2+N3"]
+        ROUTER_AUDIT["Audit router<br/>auditable queries"]
+        ROUTER_ADMIN["Admin · cases · webhooks"]
+    end
+
+    subgraph services["Service Layer (responsabilidad unica por servicio)"]
+        N1_MATCH["Matching Engine<br/>ensemble + oracle multi-feature<br/>+ reason codes"]
+        N1_FUZZY["Fuzzy + Phonetic<br/>RapidFuzz + Soundex + Metaphone"]
+        N1_SCREEN["Screening + Ensemble Matcher"]
+        N2_DUAL["Commodity classifier<br/>+ rule engine destination"]
+        N3_OPT["Route Optimizer<br/>+ Safe Route Engine<br/>Pareto multi-criteria"]
+        N3_RISK["Route Risk + Geo Utils<br/>Haversine + buffer expansion"]
+        N3_NLP["Event Classifier<br/>keyword + negation + credibility"]
+        N3_OSINT["Geopolitical Sources<br/>ACLED · GDELT · IMB · RSS"]
+        N3_ML["ML Conflict Futures<br/>Prophet + uncertainty bands"]
+        N3_PRED["Route Closure Analysis"]
+        INSURANCE["Insurance Premium Calculator<br/>perfiles de carga diferenciados"]
+        AGG["Compliance Score<br/>+ Risk Explainability<br/>+ Shipment Assessment"]
+        AUTH_SVC["Auth + JWT<br/>+ API Key Rotation<br/>+ 2FA service"]
+        AUDIT_SVC["Audit Service<br/>+ Audit Integrity<br/>append-only invariant"]
+    end
+
+    subgraph ingest["Ingest Layer (cron + Celery + Redis)"]
+        SCHED["Daily Scheduler<br/>delta-tracking + upsert atomico<br/>healthchecks"]
+        ING_SANCTIONS["Sanctions Connectors<br/>OFAC · UN · EU · UK · BIS<br/>(fuentes oficiales publicas)"]
+        ING_DUAL["Dual-Use Connectors<br/>EU Annex I · ECCN · HS/TARIC"]
+        ING_OSINT["OSINT Connectors<br/>conflict + maritime + disaster + RSS"]
+    end
+
+    subgraph data["Data Layer"]
+        PG[("PostgreSQL<br/>tablas multi-tenant FK<br/>tenant_id en cada tabla core")]
+        ALEMBIC["Alembic migrations"]
+        AUDIT_LOG[("Audit log append-only<br/>NO UPDATE NI DELETE invariant")]
+        REDIS[("Redis<br/>cache + queue")]
+        ML_MODELS[("Prophet pickle models<br/>por corredor<br/>identificadores withheld")]
+    end
+
+    subgraph observability["Observability"]
+        OTEL["OpenTelemetry<br/>traces + custom metrics"]
+        SENTRY["Sentry<br/>errors + perf"]
+    end
+
+    subgraph cross_cut["Cross-cutting invariants"]
+        INV1["Matching determinista auditado"]
+        INV2["Oracle scoring + reason codes"]
+        INV3["Ingest delta + upsert atomico"]
+        INV4["Audit log append-only"]
+        INV5["Tenant_id derivado de API key"]
+    end
+
+    UI --> ROUTER_CHECK
+    UI --> ROUTER_DUAL
+    UI --> ROUTER_ROUTES
+    UI --> ROUTER_INSURANCE
+    UI --> ROUTER_INTEGRATED
+    UI --> ROUTER_AUDIT
+    UI --> ROUTER_ADMIN
+    AUTH_NEXT -.->|JWT Bearer| ROUTER_CHECK
+    AUTH_NEXT -.->|JWT Bearer| ROUTER_INTEGRATED
+
+    ROUTER_CHECK --> N1_SCREEN
+    N1_SCREEN --> N1_MATCH
+    N1_MATCH --> N1_FUZZY
+    ROUTER_DUAL --> N2_DUAL
+    ROUTER_ROUTES --> N3_OPT
+    ROUTER_ROUTES --> N3_RISK
+    N3_RISK --> N3_NLP
+    N3_NLP --> N3_OSINT
+    N3_OPT --> N3_ML
+    N3_ML --> N3_PRED
+    ROUTER_INSURANCE --> INSURANCE
+    ROUTER_INTEGRATED --> N1_MATCH
+    ROUTER_INTEGRATED --> N2_DUAL
+    ROUTER_INTEGRATED --> N3_RISK
+    ROUTER_INTEGRATED --> AGG
+    AGG --> AUDIT_SVC
+    ROUTER_AUDIT --> AUDIT_SVC
+    AUTH_SVC -.->|tenant_id derived| N1_SCREEN
+    AUTH_SVC -.->|tenant_id derived| ROUTER_INTEGRATED
+
+    SCHED --> ING_SANCTIONS
+    SCHED --> ING_DUAL
+    SCHED --> ING_OSINT
+    ING_SANCTIONS --> PG
+    ING_DUAL --> PG
+    ING_OSINT --> PG
+
+    N1_SCREEN <--> PG
+    N2_DUAL <--> PG
+    N3_RISK <--> PG
+    AGG <--> PG
+    AUDIT_SVC --> AUDIT_LOG
+    N1_MATCH <--> REDIS
+    N3_ML <--> ML_MODELS
+    PG <-->|migrations| ALEMBIC
+
+    services -.->|telemetry| OTEL
+    services -.->|errors| SENTRY
+
+    INV1 -.-> N1_MATCH
+    INV2 -.-> N1_MATCH
+    INV3 -.-> SCHED
+    INV4 -.-> AUDIT_LOG
+    INV5 -.-> AUTH_SVC
+
+    classDef ui fill:#FF6D00,stroke:#FF9100,color:white
+    classDef api fill:#2962FF,stroke:#1E88E5,color:white
+    classDef svc_n1 fill:#C62828,stroke:#B71C1C,color:white
+    classDef svc_n2 fill:#7C4DFF,stroke:#651FFF,color:white
+    classDef svc_n3 fill:#00897B,stroke:#00695C,color:white
+    classDef svc_core fill:#5C6BC0,stroke:#3949AB,color:white
+    classDef db fill:#388E3C,stroke:#1B5E20,color:white
+    classDef ingest fill:#FFA000,stroke:#FF8F00,color:white
+    classDef obs fill:#616161,stroke:#424242,color:white
+    classDef inv fill:#AD1457,stroke:#880E4F,color:white
+
+    class UI,I18N,AUTH_NEXT ui
+    class ROUTER_CHECK,ROUTER_DUAL,ROUTER_ROUTES,ROUTER_INSURANCE,ROUTER_INTEGRATED,ROUTER_AUDIT,ROUTER_ADMIN api
+    class N1_MATCH,N1_FUZZY,N1_SCREEN svc_n1
+    class N2_DUAL svc_n2
+    class N3_OPT,N3_RISK,N3_NLP,N3_OSINT,N3_ML,N3_PRED svc_n3
+    class INSURANCE,AGG,AUTH_SVC,AUDIT_SVC svc_core
+    class PG,ALEMBIC,AUDIT_LOG,REDIS,ML_MODELS db
+    class SCHED,ING_SANCTIONS,ING_DUAL,ING_OSINT ingest
+    class OTEL,SENTRY obs
+    class INV1,INV2,INV3,INV4,INV5 inv
+
+%% Notes
+%% 3 niveles independientes que convergen en Integrated Risk Decision Engine.
+%% N1 sanctions: ensemble matching multi-algoritmo + oracle multi-feature + reason codes.
+%% N2 dual-use: rule engine + textual fuzzy descripcion -> codigo regulatorio.
+%% N3 routes: Pareto multi-criteria + NLP keyword + Haversine + Prophet ML.
+%% Cross-cutting: marine cargo insurance premium + perfiles de carga diferenciados.
+%% Multi-tenant estricto: tenant_id derivado de API key.
+%% Audit log append-only con servicio de integridad.
+%% NO LLM como decisor (explicabilidad como invariante regulatoria).
+%% Identificadores internos withheld por prudencia OPSEC.

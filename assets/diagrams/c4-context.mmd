@@ -1,0 +1,82 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#2962FF', 'secondaryColor': '#00C853', 'tertiaryColor': '#FF6D00'}}}%%
+
+flowchart TB
+    COMPLIANCE_OFFICER["Compliance Officer<br/>multi-role: admin · analyst · viewer · auditor"]
+    API_CLIENT["API Client<br/>B2B integration"]
+
+    subgraph platform["Trade Compliance Platform (multi-tenant SaaS)"]
+        CORE["Integrated Risk Decision Engine<br/>orchestrator + risk aggregator<br/>+ audit log append-only"]
+    end
+
+    subgraph sanctions_sources["Sanctions sources (public official lists)"]
+        OFAC["OFAC SDN<br/>US Treasury"]
+        UN_LIST["UN Consolidated List<br/>UN Security Council"]
+        EU_LIST["EU CFSP designations"]
+        UK_LIST["UK HMT · OFSI"]
+        BIS["BIS<br/>US Bureau of Industry and Security"]
+    end
+
+    subgraph dual_use_sources["Dual-use export control sources"]
+        EU_ANNEX["EU Annex I<br/>Reg. 2021/821"]
+        ECCN["ECCN codes<br/>US BIS"]
+        HS_TARIC["HS · TARIC<br/>tariff codes"]
+    end
+
+    subgraph osint_sources["OSINT / Geopolitical risk sources"]
+        ACLED["ACLED<br/>conflict event data"]
+        GDELT["GDELT<br/>event database with Cameo codes"]
+        IMB["IMB<br/>piracy reports"]
+        USGS["USGS<br/>earthquakes"]
+        ADVISORIES["National travel advisories<br/>+ RSS official feeds"]
+    end
+
+    subgraph downstream["Downstream integrations"]
+        WEBHOOKS["Webhooks<br/>Slack · Teams · JIRA · SAP<br/>via adapter pattern"]
+        EXTERNAL_APIS["External shipping / AIS APIs<br/>optional integrations"]
+        EMAIL["Email service<br/>alerts · notifications"]
+    end
+
+    COMPLIANCE_OFFICER -->|opera dashboard + cases| CORE
+    API_CLIENT -->|integrated check requests<br/>API key + JWT| CORE
+
+    OFAC -.->|daily ingest<br/>delta-tracking + upsert| CORE
+    UN_LIST -.->|daily ingest| CORE
+    EU_LIST -.->|daily ingest| CORE
+    UK_LIST -.->|daily ingest| CORE
+    BIS -.->|daily ingest| CORE
+
+    EU_ANNEX -.->|dual-use catalog| CORE
+    ECCN -.->|export control codes| CORE
+    HS_TARIC -.->|tariff codes| CORE
+
+    ACLED -.->|conflict events + fatalities| CORE
+    GDELT -.->|Cameo event codes| CORE
+    IMB -.->|maritime threats| CORE
+    USGS -.->|natural disasters| CORE
+    ADVISORIES -.->|official advisories| CORE
+
+    CORE -->|alerts on FLAG · BLOCK| WEBHOOKS
+    CORE -->|enrichment optional| EXTERNAL_APIS
+    CORE -->|notifications| EMAIL
+
+    classDef user fill:#FF6D00,stroke:#FF9100,color:white
+    classDef core fill:#2962FF,stroke:#1E88E5,color:white
+    classDef sanctions fill:#C62828,stroke:#B71C1C,color:white
+    classDef dualuse fill:#7C4DFF,stroke:#651FFF,color:white
+    classDef osint fill:#00897B,stroke:#00695C,color:white
+    classDef downstream fill:#757575,stroke:#9E9E9E,color:white
+
+    class COMPLIANCE_OFFICER,API_CLIENT user
+    class CORE core
+    class OFAC,UN_LIST,EU_LIST,UK_LIST,BIS sanctions
+    class EU_ANNEX,ECCN,HS_TARIC dualuse
+    class ACLED,GDELT,IMB,USGS,ADVISORIES osint
+    class WEBHOOKS,EXTERNAL_APIS,EMAIL downstream
+
+%% Notes
+%% Plataforma multi-tenant SaaS de compliance comercio internacional.
+%% Punto central: Integrated Risk Decision Engine que agrega 3 niveles
+%% (sanctions screening · dual-use controls · routes & geopolitical risk)
+%% + cross-cutting marine cargo insurance.
+%% Fuentes de sanciones: solo listas oficiales publicas.
+%% Fuentes OSINT: integradas como categorias con licencias respetadas.

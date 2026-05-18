@@ -1,0 +1,65 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Build
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+dist/
+build/
+.next/
+
+# Secrets / credentials (NEVER commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*
+secrets*
+*.kdbx
+
+# Project private artifacts (NEVER commit — sensibilidad regulatoria)
+data/raw/
+data/sanctions/
+data/dual_use/
+data/private/
+ml_models/*.pkl
+samples/
+*.pdf
+*.xlsx
+*.xls
+*.csv
+!data/samples/synthetic_*.csv
+outputs/
+reports/private/
+
+# Internal docs
+**/STATUS.md
+**/PROGRESS.md
+**/CLAUDE.md
+**/BACKLOG.md
+**/CHANGELOG.md
+*_internal_*.md
+*_private_*.md
+
+# Tests with real data
+tests/integration/*real*
+tests/integration/*production*
+
+# Coverage / cache
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Logs
+*.log
+logs/
