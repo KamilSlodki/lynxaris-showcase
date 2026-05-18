@@ -1,0 +1,173 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#2962FF', 'secondaryColor': '#00C853', 'tertiaryColor': '#FF6D00'}}}%%
+
+flowchart TB
+    subgraph input["Entrada — transaction context"]
+        IN_ENTITY["Entity payload<br/>buyer · seller · type · country"]
+        IN_PRODUCT["Product payload<br/>description · HS/ECCN candidate · value"]
+        IN_GEO["Geo payload<br/>origin · destination · corridor · transport mode"]
+        IN_CARGO["Cargo payload<br/>type · value · weight"]
+        IN_AUTH["Auth context<br/>API key hash -> tenant_id"]
+    end
+
+    subgraph n1["N1 — Sanctions Screening"]
+        N1_NORMAL["Normalizer<br/>lowercase · diacritics · transliteration"]
+        N1_FUZZY["Fuzzy matcher<br/>RapidFuzz token_set_ratio"]
+        N1_PHON["Phonetic matcher<br/>Soundex + Metaphone"]
+        N1_ENS["Ensemble combiner<br/>multi-algoritmo configurable"]
+        N1_ORACLE["Oracle scoring<br/>multi-feature + reason codes"]
+        N1_DECISION["Sanctions decision<br/>AUTO-CLEAR · REVIEW · FLAG · BLOCK<br/>+ matched lists + similarity score"]
+    end
+
+    subgraph n2["N2 — Dual-Use Controls"]
+        N2_TEXT["Textual fuzzy<br/>descripcion -> codigo regulatorio"]
+        N2_CATALOG["Catalog lookup<br/>EU Annex I · ECCN · HS/TARIC"]
+        N2_RULE["Destination rule engine<br/>pais x codigo regulatorio"]
+        N2_DECISION["Dual-use decision<br/>NO LISTADO · CONTROL · BLOQUEADO<br/>+ classification + restrictions"]
+    end
+
+    subgraph n3["N3 — Routes & Geopolitical Risk"]
+        N3_GEOM[("Route geometry store<br/>LineString GeoJSON por corredor")]
+        N3_EVENTS[("Events store<br/>geo-referenced events<br/>+ severity + timestamp")]
+        N3_NLP["NLP event classifier<br/>keyword + negation + credibility"]
+        N3_OSINT["OSINT ingest<br/>ACLED · GDELT · IMB · USGS · RSS"]
+        N3_GEO["Geo impact engine<br/>Haversine + buffer expansion<br/>+ LineString intersection"]
+        N3_ML["Prophet forecaster<br/>conflict-futures por corredor<br/>+ uncertainty bands"]
+        N3_BASE[("Corridor baseline<br/>risk + historic timeline")]
+        N3_DECISION["Route decision<br/>LOW · MEDIUM · HIGH · CRITICAL<br/>+ alternatives + drivers + ETA conf"]
+    end
+
+    subgraph maps["Map rendering — frontend"]
+        MAP_BASE["Base map tiles<br/>geo render"]
+        MAP_OVERLAY["Risk overlay layer<br/>color by risk_level"]
+        MAP_EVENTS["Event markers<br/>severity-coded"]
+        MAP_BUFFER["Buffer polygons<br/>impact radius por evento"]
+        MAP_VESSEL["Vessel position lookup<br/>AIS optional"]
+    end
+
+    subgraph cross["Cross-cutting — Marine Cargo Insurance"]
+        INS_PROFILE["Cargo profile selector<br/>risk multipliers diferenciados"]
+        INS_PREMIUM["Premium calculator<br/>base + war risk + route risk<br/>+ sanctions + dual-use"]
+        INS_ROI["ROI analysis<br/>tradeoff cost / days / risk"]
+    end
+
+    subgraph aggregator["Integrated Risk Decision Engine"]
+        AGG_COLLECT["Signal collector<br/>recibe outputs de N1+N2+N3+Ins"]
+        AGG_WEIGHTS["Tenant risk weights<br/>configurables por tenant"]
+        AGG_AGGREGATE["Multi-signal aggregator<br/>score + reason composition"]
+        AGG_EXPLAIN["Risk explainability<br/>desglose por factor"]
+        AGG_FINAL["Final decision<br/>AUTO-CLEAR · REVIEW · FLAG · BLOCK<br/>+ consolidated reason codes"]
+    end
+
+    subgraph audit["Audit & Storage"]
+        AUDIT_LOG[("Audit log append-only<br/>NO UPDATE NI DELETE")]
+        SCREEN_HIST[("Screening history<br/>per tenant_id")]
+    end
+
+    subgraph ui["UI consumers"]
+        UI_DASH["Unified Check dashboard<br/>KPIs + case queue"]
+        UI_CMD["Centro de Comando<br/>L1 + L2 + L3 + L5 consolidado"]
+        UI_MAP["Route Intelligence map<br/>interactive corridors"]
+        UI_CASE["Case detail<br/>full breakdown explainability"]
+        UI_REG["Regulatory Intelligence<br/>narrative bundles + maturity"]
+    end
+
+    IN_AUTH -.->|tenant_id derived<br/>INV-TENANT-01| n1
+    IN_AUTH -.->|tenant_id derived| n2
+    IN_AUTH -.->|tenant_id derived| n3
+
+    IN_ENTITY --> N1_NORMAL
+    N1_NORMAL --> N1_FUZZY
+    N1_NORMAL --> N1_PHON
+    N1_FUZZY --> N1_ENS
+    N1_PHON --> N1_ENS
+    N1_ENS --> N1_ORACLE
+    N1_ORACLE --> N1_DECISION
+
+    IN_PRODUCT --> N2_TEXT
+    IN_GEO --> N2_RULE
+    N2_TEXT --> N2_CATALOG
+    N2_CATALOG --> N2_RULE
+    N2_RULE --> N2_DECISION
+
+    IN_GEO --> N3_GEOM
+    N3_OSINT --> N3_NLP
+    N3_NLP --> N3_EVENTS
+    N3_EVENTS --> N3_GEO
+    N3_GEOM --> N3_GEO
+    N3_BASE --> N3_GEO
+    N3_ML --> N3_GEO
+    N3_GEO --> N3_DECISION
+
+    N3_GEOM -.->|GeoJSON| MAP_BASE
+    N3_DECISION -.->|risk_level| MAP_OVERLAY
+    N3_EVENTS -.->|markers| MAP_EVENTS
+    N3_GEO -.->|polygons| MAP_BUFFER
+    IN_GEO -.->|coords| MAP_VESSEL
+
+    IN_CARGO --> INS_PROFILE
+    N1_DECISION --> INS_PREMIUM
+    N2_DECISION --> INS_PREMIUM
+    N3_DECISION --> INS_PREMIUM
+    INS_PROFILE --> INS_PREMIUM
+    INS_PREMIUM --> INS_ROI
+
+    N1_DECISION --> AGG_COLLECT
+    N2_DECISION --> AGG_COLLECT
+    N3_DECISION --> AGG_COLLECT
+    INS_PREMIUM --> AGG_COLLECT
+    AGG_COLLECT --> AGG_AGGREGATE
+    AGG_WEIGHTS --> AGG_AGGREGATE
+    AGG_AGGREGATE --> AGG_EXPLAIN
+    AGG_EXPLAIN --> AGG_FINAL
+
+    AGG_FINAL --> AUDIT_LOG
+    AGG_FINAL --> SCREEN_HIST
+    N1_DECISION -.-> AUDIT_LOG
+    N2_DECISION -.-> AUDIT_LOG
+    N3_DECISION -.-> AUDIT_LOG
+
+    AGG_FINAL --> UI_DASH
+    AGG_FINAL --> UI_CMD
+    AGG_EXPLAIN --> UI_CASE
+    MAP_BASE --> UI_MAP
+    MAP_OVERLAY --> UI_MAP
+    MAP_EVENTS --> UI_MAP
+    MAP_BUFFER --> UI_MAP
+    MAP_VESSEL --> UI_MAP
+    N3_NLP --> UI_REG
+
+    classDef input fill:#FF6D00,stroke:#FF9100,color:white
+    classDef level1 fill:#C62828,stroke:#B71C1C,color:white
+    classDef level2 fill:#7C4DFF,stroke:#651FFF,color:white
+    classDef level3 fill:#00897B,stroke:#00695C,color:white
+    classDef map fill:#1976D2,stroke:#0D47A1,color:white
+    classDef insurance fill:#5C6BC0,stroke:#3949AB,color:white
+    classDef agg fill:#AD1457,stroke:#880E4F,color:white
+    classDef audit fill:#388E3C,stroke:#1B5E20,color:white
+    classDef ui fill:#FBC02D,stroke:#F57F17,color:black
+
+    class IN_ENTITY,IN_PRODUCT,IN_GEO,IN_CARGO,IN_AUTH input
+    class N1_NORMAL,N1_FUZZY,N1_PHON,N1_ENS,N1_ORACLE,N1_DECISION level1
+    class N2_TEXT,N2_CATALOG,N2_RULE,N2_DECISION level2
+    class N3_GEOM,N3_EVENTS,N3_NLP,N3_OSINT,N3_GEO,N3_ML,N3_BASE,N3_DECISION level3
+    class MAP_BASE,MAP_OVERLAY,MAP_EVENTS,MAP_BUFFER,MAP_VESSEL map
+    class INS_PROFILE,INS_PREMIUM,INS_ROI insurance
+    class AGG_COLLECT,AGG_WEIGHTS,AGG_AGGREGATE,AGG_EXPLAIN,AGG_FINAL agg
+    class AUDIT_LOG,SCREEN_HIST audit
+    class UI_DASH,UI_CMD,UI_MAP,UI_CASE,UI_REG ui
+
+%% Notes
+%% Flujo de datos completo del Integrated Risk Decision Engine.
+%% N1 (Sanctions) consume Entity payload + Auth context (tenant derivation).
+%% N2 (Dual-Use) consume Product + Geo payload.
+%% N3 (Routes) consume Geo payload + OSINT externo + ML forecasts + Geo store.
+%% Los mapas (rendering frontend) consumen GeoJSON de corredores + eventos
+%% georreferenciados + buffer polygons calculados por geo impact engine +
+%% vessel position via AIS opcional.
+%% Marine Cargo Insurance es cross-cutting: consume decisions de N1+N2+N3
+%% para calcular premium.
+%% Risk Aggregator consolida las 4 senales, aplica pesos por tenant,
+%% emite decision final con explicabilidad.
+%% Audit log append-only recibe decisions de cada nivel + final.
+%% UI consumers: dashboard, Centro de Comando (L1+L2+L3+L5), mapa,
+%% case detail, regulatory intelligence.

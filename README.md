@@ -168,6 +168,67 @@ Los 3 niveles + insurance NO son monolíticos. Son **motores independientes que 
 
 ---
 
+## Cómo fluyen los datos del screening
+
+Dos vistas complementarias del flujo: una de **flujo de datos end-to-end** (qué pasa con los datos desde que entran hasta que se renderizan en UI) y una de **componentes internos del orquestador** (cómo el Integrated Risk Decision Engine compone la decisión final).
+
+### Vista 1 · Flujo de datos end-to-end
+
+Muestra cómo los payloads de entrada (entity · product · geo · cargo · auth) viajan a través de los 3 niveles + insurance + risk aggregator hasta llegar al audit log y a los consumidores de UI (dashboard, Centro de Comando, mapa interactivo, case detail, regulatory intelligence). Incluye específicamente **cómo los mapas consumen los datos**: el `Route geometry store` aporta los GeoJSON `LineString` de cada corredor, el `Events store` aporta los markers georreferenciados, el `Geo impact engine` aporta los polígonos de buffer dinámico calculados por severidad, y el `vessel position lookup` opcional aporta la posición AIS en tiempo real.
+
+[`assets/diagrams/data-flow.mmd`](assets/diagrams/data-flow.mmd) — render Mermaid en GitHub.
+
+```mermaid
+flowchart LR
+    IN["Transaction context<br/>entity · product · geo ·<br/>cargo · API key"] --> N1["N1<br/>Sanctions<br/>Screening"]
+    IN --> N2["N2<br/>Dual-Use<br/>Controls"]
+    IN --> N3["N3<br/>Routes &<br/>Geopolitical"]
+    N3 -.->|GeoJSON LineString<br/>events markers<br/>buffer polygons<br/>AIS position| MAPS["Map<br/>rendering"]
+    N1 --> AGG["Risk<br/>Aggregator"]
+    N2 --> AGG
+    N3 --> AGG
+    N1 --> INS["Cargo<br/>Insurance"]
+    N2 --> INS
+    N3 --> INS
+    INS --> AGG
+    AGG --> DEC["Decision<br/>AUTO-CLEAR / REVIEW /<br/>FLAG / BLOCK<br/>+ reason codes"]
+    DEC --> AUDIT["Audit log<br/>append-only"]
+    DEC --> UI["UI consumers<br/>dashboard · Centro de Comando ·<br/>case detail · regulatory intel"]
+    MAPS --> UI
+
+    classDef in fill:#FF6D00,stroke:#FF9100,color:white
+    classDef n1 fill:#C62828,stroke:#B71C1C,color:white
+    classDef n2 fill:#7C4DFF,stroke:#651FFF,color:white
+    classDef n3 fill:#00897B,stroke:#00695C,color:white
+    classDef agg fill:#AD1457,stroke:#880E4F,color:white
+    classDef audit fill:#388E3C,stroke:#1B5E20,color:white
+    classDef ui fill:#FBC02D,stroke:#F57F17,color:black
+    classDef ins fill:#5C6BC0,stroke:#3949AB,color:white
+    classDef map fill:#1976D2,stroke:#0D47A1,color:white
+
+    class IN in
+    class N1 n1
+    class N2 n2
+    class N3 n3
+    class AGG,DEC agg
+    class AUDIT audit
+    class UI ui
+    class INS ins
+    class MAPS map
+```
+
+> Diagrama resumen embebido. El [`data-flow.mmd`](assets/diagrams/data-flow.mmd) completo expone componentes internos por nivel: normalizer · fuzzy matcher · phonetic matcher · ensemble combiner · oracle scoring (N1) · textual fuzzy · catalog lookup · destination rule engine (N2) · route geometry store · events store · NLP event classifier · OSINT ingest · geo impact engine · Prophet forecaster · corridor baseline (N3) · cargo profile selector · premium calculator · ROI analysis (Insurance).
+
+### Vista 2 · C4 Component del orquestador (Integrated Risk Decision Engine)
+
+Vista de los **componentes internos del orquestador**: cómo el container central resuelve el tenant, valida schema, despacha en paralelo a los 3 niveles + insurance con timeout handling y partial degradation, agrega las señales con pesos por tenant, genera explicabilidad, emite decisión, escribe al audit log y dispara webhooks/email cuando hay FLAG/BLOCK.
+
+[`assets/diagrams/c4-component-orchestrator.mmd`](assets/diagrams/c4-component-orchestrator.mmd) — render Mermaid en GitHub.
+
+Esta vista complementa el flujo de datos: mientras el data-flow muestra **dónde van los datos**, el component diagram muestra **cómo el orquestador compone la decisión** internamente con sus 12 componentes (auth resolver · schema validator · tenant config loader · level dispatcher · 3 client adapters con caches · insurance client · signal collector · aggregator · explainability generator · decision emitter · audit writer · response serializer).
+
+---
+
 ## Capturas de la plataforma
 
 > Capturas tomadas en entorno técnico con datos de demostración. No representan producción comercial activa.

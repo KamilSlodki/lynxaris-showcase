@@ -1,0 +1,114 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#2962FF', 'secondaryColor': '#00C853', 'tertiaryColor': '#FF6D00'}}}%%
+
+flowchart TB
+    REQ["POST integrated check<br/>transaction context payload"]
+
+    subgraph orchestrator["Integrated Risk Decision Engine (Container internals)"]
+        AUTH_CHECK["Auth & tenant resolver<br/>API key hash (argon2) -><br/>tenant_id (INV-TENANT-01)"]
+        SCHEMA["Schema validator<br/>Pydantic strict<br/>extra=forbid"]
+        TENANT_CONFIG["Tenant config loader<br/>risk weights + thresholds<br/>+ active levels (N1/N2/N3)"]
+
+        DISPATCHER["Level dispatcher<br/>fan-out a N1+N2+N3+Insurance"]
+
+        subgraph n1_client["N1 client adapter"]
+            N1_CALL["Sanctions Screening client<br/>async call"]
+            N1_CACHE["Local cache<br/>entity normalized form"]
+        end
+
+        subgraph n2_client["N2 client adapter"]
+            N2_CALL["Dual-Use client<br/>async call"]
+            N2_CACHE["Catalog cache<br/>HS/ECCN lookup"]
+        end
+
+        subgraph n3_client["N3 client adapter"]
+            N3_CALL["Route Risk client<br/>async call"]
+            N3_CACHE["Corridor state cache<br/>last refresh"]
+        end
+
+        INS_CLIENT["Insurance premium client<br/>recibe N1+N2+N3 outputs<br/>calcula premium + ROI"]
+
+        COLLECTOR["Signal collector<br/>recoge 4 outputs<br/>+ timeout handling<br/>+ partial degradation"]
+
+        AGGREGATOR["Multi-signal aggregator<br/>score composition<br/>+ tenant weights applied"]
+
+        EXPLAIN_GEN["Explainability generator<br/>desglose por factor<br/>+ contributing reason codes"]
+
+        DECISION["Decision emitter<br/>AUTO-CLEAR / REVIEW / FLAG / BLOCK<br/>+ consolidated reasons"]
+
+        AUDIT_WRITER["Audit writer<br/>append-only<br/>+ integrity validator<br/>(INV-AUDIT-01)"]
+
+        RESPONSE["Response serializer<br/>JSON output<br/>+ trace_id + tenant_id"]
+    end
+
+    subgraph downstream["Downstream effects"]
+        WEBHOOK_DISPATCH["Webhook dispatcher<br/>adapter pattern<br/>fires on FLAG / BLOCK"]
+        EMAIL_NOTIFY["Email notifier<br/>alerts to compliance team"]
+        TELEMETRY["OpenTelemetry trace<br/>+ Sentry on error"]
+    end
+
+    REQ --> AUTH_CHECK
+    AUTH_CHECK --> SCHEMA
+    SCHEMA --> TENANT_CONFIG
+    TENANT_CONFIG --> DISPATCHER
+
+    DISPATCHER -->|entity payload| N1_CALL
+    DISPATCHER -->|product payload| N2_CALL
+    DISPATCHER -->|geo payload| N3_CALL
+
+    N1_CALL <-->|cached lookups| N1_CACHE
+    N2_CALL <-->|catalog hits| N2_CACHE
+    N3_CALL <-->|corridor state| N3_CACHE
+
+    N1_CALL --> COLLECTOR
+    N2_CALL --> COLLECTOR
+    N3_CALL --> COLLECTOR
+
+    N1_CALL --> INS_CLIENT
+    N2_CALL --> INS_CLIENT
+    N3_CALL --> INS_CLIENT
+    INS_CLIENT --> COLLECTOR
+
+    COLLECTOR --> AGGREGATOR
+    TENANT_CONFIG -.->|tenant weights| AGGREGATOR
+    AGGREGATOR --> EXPLAIN_GEN
+    EXPLAIN_GEN --> DECISION
+
+    DECISION --> AUDIT_WRITER
+    DECISION --> RESPONSE
+
+    DECISION -.->|on FLAG/BLOCK| WEBHOOK_DISPATCH
+    DECISION -.->|on FLAG/BLOCK| EMAIL_NOTIFY
+    orchestrator -.->|spans| TELEMETRY
+
+    classDef auth fill:#C62828,stroke:#B71C1C,color:white
+    classDef dispatch fill:#FF6D00,stroke:#FF9100,color:white
+    classDef client fill:#7C4DFF,stroke:#651FFF,color:white
+    classDef agg fill:#AD1457,stroke:#880E4F,color:white
+    classDef audit fill:#388E3C,stroke:#1B5E20,color:white
+    classDef resp fill:#1976D2,stroke:#0D47A1,color:white
+    classDef downstream fill:#757575,stroke:#9E9E9E,color:white
+
+    class AUTH_CHECK,SCHEMA,TENANT_CONFIG auth
+    class DISPATCHER,COLLECTOR dispatch
+    class N1_CALL,N2_CALL,N3_CALL,N1_CACHE,N2_CACHE,N3_CACHE,INS_CLIENT client
+    class AGGREGATOR,EXPLAIN_GEN,DECISION agg
+    class AUDIT_WRITER audit
+    class RESPONSE resp
+    class WEBHOOK_DISPATCH,EMAIL_NOTIFY,TELEMETRY downstream
+
+%% Notes
+%% C4 Component diagram del Integrated Risk Decision Engine.
+%% Componentes internos del orquestador:
+%% 1. Auth & tenant resolver: deriva tenant_id de API key hash.
+%% 2. Schema validator: Pydantic strict, extra=forbid.
+%% 3. Tenant config loader: pesos + thresholds + niveles activos.
+%% 4. Dispatcher: fan-out paralelo a N1+N2+N3.
+%% 5. Client adapters: N1/N2/N3 con caches locales.
+%% 6. Insurance client: consume N1+N2+N3 para premium.
+%% 7. Signal collector: timeout handling + partial degradation.
+%% 8. Aggregator: score composition con pesos por tenant.
+%% 9. Explainability generator: desglose por factor.
+%% 10. Decision emitter: AUTO-CLEAR/REVIEW/FLAG/BLOCK + reasons.
+%% 11. Audit writer: append-only con integrity validator.
+%% 12. Response serializer: JSON + trace_id.
+%% Downstream: webhooks + email + telemetry.
