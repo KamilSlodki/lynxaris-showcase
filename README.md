@@ -168,11 +168,111 @@ Los 3 niveles + insurance NO son monolíticos. Son **motores independientes que 
 
 ---
 
+## Capturas de la plataforma
+
+> Capturas tomadas en entorno técnico con datos de demostración. No representan producción comercial activa.
+
+### Landing y propuesta de valor
+
+| Hero | Módulos | Industrias | Demo |
+|---|---|---|---|
+| ![Landing hero](assets/screenshots/01-landing-hero.png) | ![Módulos](assets/screenshots/02-landing-modules.png) | ![Industrias](assets/screenshots/03-landing-industries.png) | ![Demo](assets/screenshots/04-landing-demo.png) |
+
+### Centro de Comando — verificación unificada multi-nivel
+
+Orquestación L1 (Sanciones) + L2 (Control de exportaciones) + L3 (Riesgo de ruta) + L5 (Medidas comerciales) en una sola operación, con resultado consolidado por nivel.
+
+| Formulario de operación | Resultado consolidado |
+|---|---|
+| ![Centro de comando — input](assets/screenshots/25-command-center-form.png) | ![Centro de comando — output](assets/screenshots/26-command-center-results.png) |
+
+### Panel principal — Unified Check
+
+Dashboard operativo con 4 tools rápidas (Sanctions Check · Classify Product · Route Intelligence · Trade Monitor), Case Queue, calidad y rendimiento de verificación, fuentes activas, cobertura de datos.
+
+![Unified Check dashboard](assets/screenshots/05-unified-check-dashboard.png)
+
+### Verificación de sanciones (N1)
+
+Screening individual con ensemble matcher multi-algoritmo, multi-list bonus, reason codes auditables y escalación recomendada por confianza.
+
+| Formulario + resultado | Explicabilidad de coincidencias |
+|---|---|
+| ![Sanctions verification](assets/screenshots/08-sanctions-verification.png) | ![Match explanation](assets/screenshots/09-match-explanation.png) |
+
+### Clasificación de productos / dual-use (N2)
+
+Clasificación contra ECCN + HS/TARIC + EU Annex I con plantillas pre-definidas por categoría industrial, búsqueda rápida y subida de documentos.
+
+| Formulario de clasificación | Evaluación de riesgo + decisión |
+|---|---|
+| ![Product classification form](assets/screenshots/06-product-classification-form.png) | ![Product classification result](assets/screenshots/07-product-classification-result.png) |
+
+### Inteligencia de rutas (N3)
+
+Mapa interactivo de corredores principales globales, estado en tiempo real, inteligencia en vivo, alertas por evento, alternativas con tradeoff cost/days/risk, vessel position lookup AIS, pre-execution gate con verdict + drivers + ETA confidence.
+
+| Mapa mundial | Vista regional | Panel de detalle |
+|---|---|---|
+| ![Routes world](assets/screenshots/10-route-intelligence-world.png) | ![Routes Europe](assets/screenshots/11-route-intelligence-europe.png) | ![Routes detail](assets/screenshots/12-route-intelligence-detail.png) |
+
+| Factores de riesgo + evento de impacto | Análisis de costos |
+|---|---|
+| ![Risk factors](assets/screenshots/13-route-risk-factors.png) | ![Cost analysis](assets/screenshots/14-route-cost-analysis.png) |
+
+| Safe path + AIS lookup | Pre-execution verdict + drivers + alternatives |
+|---|---|
+| ![Safe path](assets/screenshots/23-route-intelligence-safe-path.png) | ![Pre-execution verdict](assets/screenshots/24-route-pre-execution-verdict.png) |
+
+### Operaciones — hub multi-acción
+
+Hub centralizado: evaluar operación · optimizador de rutas · análisis por lote · rutas guardadas · dossiers de compliance.
+
+![Operations hub](assets/screenshots/15-operations-hub.png)
+
+### Trade Monitor — impacto comercial y señales
+
+Monitorización continua de señales políticas / sanciones / medidas con severidad clasificada, agrupación por tema y trazabilidad por fuente.
+
+| Impacto comercial | Señales agrupadas |
+|---|---|
+| ![Trade monitor impact](assets/screenshots/16-trade-monitor-impact.png) | ![Trade monitor signals](assets/screenshots/19-trade-monitor-signals.png) |
+
+### Aranceles y medidas
+
+Registro de medidas comerciales (anti-dumping, restricciones de importación, controles de exportación) con detalle por medida, jurisdicción, base legal, vigencia y fuente oficial.
+
+| Registro de medidas | Detalle de medida |
+|---|---|
+| ![Tariffs measures registry](assets/screenshots/17-tariffs-measures-registry.png) | ![Tariffs measures detail](assets/screenshots/18-tariffs-measures-detail.png) |
+
+### Inteligencia regulatoria — narrative bundles
+
+Agregación de señales y rumores en narrative bundles con confidence × impact matrix. Cada bundle escala por **maturity timeline** de 6 estados (latent → discussed → proposed → debated → measure announced → measure adopted), con confidence breakdown por fuente, event timeline y narrative coherence score.
+
+| Vista de bundles | Detalle de señal regulatoria |
+|---|---|
+| ![Regulatory intelligence bundles](assets/screenshots/20-regulatory-intelligence-bundles.png) | ![Regulatory signal detail](assets/screenshots/21-regulatory-signal-detail.png) |
+
+### Funciones de IA — 5 capacidades activas
+
+Vista consolidada de las capacidades de IA del sistema:
+
+- **AI Alert Prioritization** — scoring + ranking de alertas
+- **Match Explanations** — explicaciones generadas por IA con contexto regulatorio
+- **Predictive Route Risk** — forecasts ML de riesgo geopolítico con uncertainty
+- **Compliance Q&A (RAG)** — preguntas sobre regulación con respuestas IA
+- **Automated Models monitoring** — modelos monitorizados continuamente con detección de drift
+
+![AI features overview](assets/screenshots/22-ai-features-overview.png)
+
+---
+
 ## Stack IA detallado
 
 Toda la inteligencia del sistema es **determinista y trazable**. NO hay LLM como decisor final (decisión consciente: regulator no acepta black-box).
 
-### 1. Matching engine — fuzzy ensemble
+### 1. Motor de matching — ensemble fuzzy
 
 | Componente | Algoritmo | Propósito |
 |---|---|---|
@@ -187,7 +287,7 @@ Toda la inteligencia del sistema es **determinista y trazable**. NO hay LLM como
 
 **Deduplicación multi-source**: si entidad aparece en múltiples listas oficiales, bonus de confidence configurable.
 
-### 2. NLP de eventos geopolíticos — keyword-based con negation
+### 2. NLP de eventos geopolíticos — keyword-based con detección de negación
 
 Servicio de clasificación de noticias en múltiples categorías de evento:
 
@@ -197,7 +297,7 @@ Servicio de clasificación de noticias en múltiples categorías de evento:
 - **Severity score**: rango normalizado 0.0–1.0 + confidence 0.0–1.0.
 - **Sin transformers / BERT / GPT** — keyword + heurística + scoring lógico.
 
-### 3. Geographic impact — Haversine + buffer expansion
+### 3. Impacto geográfico — Haversine + buffer dinámico
 
 - **Haversine distance** entre evento georreferenciado y geometría de la ruta.
 - **Buffer dinámico según severidad del evento**.
@@ -205,7 +305,7 @@ Servicio de clasificación de noticias en múltiples categorías de evento:
 - **Temporal decay**: eventos antiguos pesan menos exponencialmente.
 - **Sin clustering ML** — agregación por zona con servicio dedicado.
 
-### 4. Time-series forecasting — Prophet
+### 4. Forecasting de series temporales — Prophet
 
 - **Prophet** (Facebook) con external regressors (conflict intensity · military activity).
 - **Modelos pickle entrenados por corredor** (identificadores específicos withheld por prudencia regulatoria MAR EU).
@@ -213,7 +313,7 @@ Servicio de clasificación de noticias en múltiples categorías de evento:
 - **Forecast horizon configurable** (días–semanas).
 - **NUNCA decisor final**: input al risk aggregator, humano aprueba decisión.
 
-### 5. Route optimization — Pareto multi-criteria
+### 5. Optimización de rutas — Pareto multi-criteria
 
 - **Algoritmo**: generación de candidatos + scoring multi-factor + Pareto frontier filtering.
 - **Múltiples criterios**: cost · time · safety/geopolitical risk · carbon footprint · ESG · balanced.
@@ -222,7 +322,7 @@ Servicio de clasificación de noticias en múltiples categorías de evento:
 - **EU ETS carbon pricing** integrado (configurable).
 - **Reasoning per route**: cada ruta candidata explica por qué está bloqueada, recomendada o descartada.
 
-### 6. Scoring agregado — risk explainability
+### 6. Scoring agregado — explicabilidad del riesgo
 
 Servicio de agregación multi-nivel con weighting configurable por tenant:
 
