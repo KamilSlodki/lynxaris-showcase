@@ -1,4 +1,8 @@
-# Trade Compliance & Geopolitical Risk Intelligence Platform — Showcase
+# Lynxaris — Trade Risk Intelligence
+
+### Trade Compliance & Geopolitical Risk Intelligence Platform — Showcase
+
+**Lynxaris.com** *(sitio en preparación)* · *Sanctions, goods and routes — with the evidence behind every call.*
 
 **Engineered by [Kamil Slodki](https://www.linkedin.com/in/kamilslodki/)** · Valencia, España · Remote-first
 
