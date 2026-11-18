@@ -26,7 +26,7 @@ flowchart TB
         N3_RISK["Route Risk + Geo Utils<br/>Haversine + buffer expansion"]
         N3_NLP["Event Classifier<br/>keyword + negation + credibility"]
         N3_OSINT["Geopolitical Sources<br/>ACLED · GDELT · IMB · RSS"]
-        N3_ML["ML Conflict Futures<br/>Prophet + uncertainty bands"]
+        N3_ML["Previsión de conflictos<br/>en desarrollo · no disponible"]
         N3_PRED["Route Closure Analysis"]
         INSURANCE["Insurance Premium Calculator<br/>perfiles de carga diferenciados"]
         AGG["Compliance Score<br/>+ Risk Explainability<br/>+ Shipment Assessment"]
@@ -46,7 +46,7 @@ flowchart TB
         ALEMBIC["Alembic migrations"]
         AUDIT_LOG[("Audit log append-only<br/>NO UPDATE NI DELETE invariant")]
         REDIS[("Redis<br/>cache + queue")]
-        ML_MODELS[("Prophet pickle models<br/>por corredor<br/>identificadores withheld")]
+        ML_MODELS[("Modelos de previsión<br/>pendientes de entrenar")]
     end
 
     subgraph observability["Observability"]
@@ -143,7 +143,7 @@ flowchart TB
 %% 3 niveles independientes que convergen en Integrated Risk Decision Engine.
 %% N1 sanctions: ensemble matching multi-algoritmo + oracle multi-feature + reason codes.
 %% N2 dual-use: rule engine + textual fuzzy descripcion -> codigo regulatorio.
-%% N3 routes: Pareto multi-criteria + NLP keyword + Haversine + Prophet ML.
+%% N3 routes: Pareto multi-criteria + NLP keyword + Haversine; previsión en desarrollo.
 %% Cross-cutting: marine cargo insurance premium + perfiles de carga diferenciados.
 %% Multi-tenant estricto: tenant_id derivado de API key.
 %% Audit log append-only con servicio de integridad.
